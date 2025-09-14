@@ -331,9 +331,35 @@ backend/house-trend/backend/
 - [ ] Performance maintained (chart loading speed)
 - [ ] Mobile compatibility preserved
 
+## 🌐 Live Frontend Integration
+
+The system generates charts that are integrated into the live website with interactive displays:
+
+### English Pages
+- **Tokyo**: https://heysho.com/en/trend/house/tokyo.html
+- **Kanagawa**: https://heysho.com/en/trend/house/kanagawa.html
+- **Chiba**: https://heysho.com/en/trend/house/chiba.html
+- **Saitama**: https://heysho.com/en/trend/house/saitama.html
+- **Osaka**: https://heysho.com/en/trend/house/osaka.html
+- **Aichi**: https://heysho.com/en/trend/house/aichi.html
+
+### Japanese Pages
+- **東京**: https://heysho.com/trend/house/tokyo.html
+- **神奈川**: https://heysho.com/trend/house/kanagawa.html
+- **千葉**: https://heysho.com/trend/house/chiba.html
+- **埼玉**: https://heysho.com/trend/house/saitama.html
+- **大阪**: https://heysho.com/trend/house/osaka.html
+- **愛知**: https://heysho.com/trend/house/aichi.html
+
+### Integration Features
+- **Responsive Modal Display**: Charts open in full-screen modal windows
+- **Bilingual Support**: Complete Japanese and English versions
+- **Interactive Navigation**: Easy area and room type selection
+- **Mobile Optimization**: Touch-friendly interface for all devices
+
 ---
 
-**Document Version**: 1.0  
-**Created**: 2025-09-13  
-**Last Updated**: 2025-09-13  
+**Document Version**: 1.0
+**Created**: 2025-09-13
+**Last Updated**: 2025-09-14
 **Status**: Ready for Implementation

@@ -39,6 +39,26 @@ MLIT API → Data Fetching → Processing → Chart Generation → Frontend Inte
 Raw JSON → Transformed → CSV Files → 3,800+ Charts → Website Display
 ```
 
+## 🌐 Live Frontend Demo
+
+The generated charts are integrated into the live website with interactive modal displays:
+
+### English Pages
+- **Tokyo**: https://heysho.com/en/trend/house/tokyo.html
+- **Kanagawa**: https://heysho.com/en/trend/house/kanagawa.html
+- **Chiba**: https://heysho.com/en/trend/house/chiba.html
+- **Saitama**: https://heysho.com/en/trend/house/saitama.html
+- **Osaka**: https://heysho.com/en/trend/house/osaka.html
+- **Aichi**: https://heysho.com/en/trend/house/aichi.html
+
+### Japanese Pages
+- **東京**: https://heysho.com/trend/house/tokyo.html
+- **神奈川**: https://heysho.com/trend/house/kanagawa.html
+- **千葉**: https://heysho.com/trend/house/chiba.html
+- **埼玉**: https://heysho.com/trend/house/saitama.html
+- **大阪**: https://heysho.com/trend/house/osaka.html
+- **愛知**: https://heysho.com/trend/house/aichi.html
+
 ## 📊 Data Coverage
 
 ### Supported Prefectures
