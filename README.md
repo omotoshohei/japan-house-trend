@@ -12,7 +12,7 @@ python update_pipeline.py
 
 ### Full Production Update
 ```bash
-# Update all 5 prefectures with complete data (2007-2025)
+# Update all 6 prefectures with complete data (2007-2025)
 python run_full_update.py
 ```
 
@@ -26,9 +26,9 @@ japan-house-trend/
 ├── data_transformer.py         # JSON to CSV data transformation
 ├── update_pipeline.py          # Main data processing & chart generation pipeline
 ├── run_full_update.py         # Production batch processing script
-├── api_data/                  # Raw API responses and reports
-├── data/                      # Processed CSV files
-└── raw_data/                  # Legacy data files
+├── api_data/                  # Raw API responses (Git ignored)
+├── data/                      # Processed CSV files (Git ignored)
+└── raw_data/                  # Legacy data files (Git ignored)
 ```
 
 ## 🏗️ System Architecture
@@ -36,7 +36,7 @@ japan-house-trend/
 ```
 MLIT API → Data Fetching → Processing → Chart Generation → Frontend Integration
     ↓           ↓            ↓              ↓                   ↓
-Raw JSON → Transformed → CSV Files → 3,800+ Charts → Website Display
+Raw JSON → Transformed → CSV Files → 3,620 Charts → Website Display
 ```
 
 ## 🌐 Live Frontend Demo
@@ -64,17 +64,19 @@ The generated charts are integrated into the live website with interactive modal
 ### Supported Prefectures
 | Prefecture | Code | Records | Areas | Status |
 |------------|------|---------|-------|---------|
-| 東京 (Tokyo) | 13 | 460,456 | 59 | ✅ Complete |
-| 千葉 (Chiba) | 12 | 163,861 | 59 | ✅ Complete |
-| 神奈川 (Kanagawa) | 14 | 284,638 | 58 | ✅ Complete |
-| 大阪 (Osaka) | 27 | 269,015 | 72 | ✅ Complete |
-| 愛知 (Aichi) | 23 | 151,936 | 69 | ✅ Complete |
+| 東京 (Tokyo) | 13 | 479,508 | 59 | ✅ Complete |
+| 千葉 (Chiba) | 12 | 170,573 | 59 | ✅ Complete |
+| 埼玉 (Saitama) | 11 | 197,394 | 72 | ✅ Complete |
+| 神奈川 (Kanagawa) | 14 | 296,233 | 58 | ✅ Complete |
+| 大阪 (Osaka) | 27 | 281,291 | 72 | ✅ Complete |
+| 愛知 (Aichi) | 23 | 157,362 | 69 | ✅ Complete |
 
-**Total**: 1,329,906 real estate transactions
+**Total**: 1,582,361 real estate transactions
 
 ### Time Period
-- **Data Range**: 2007-2025 (Q1)
-- **Current Status**: 2025 data includes January-March only
+- **Data Range**: 2007-2025 (through Q4)
+- **Current Status**: 2025 data includes Q1-Q4 records available from the MLIT API
+- **Latest Quarter Note**: The latest released quarter can contain fewer records than prior quarters depending on MLIT publication status
 - **Update Frequency**: Quarterly (as MLIT releases new data)
 
 ### Room Types
@@ -92,25 +94,25 @@ The generated charts are integrated into the live website with interactive modal
 - **Bilingual support**: Japanese and English versions
 - **Clean formatting**: No scientific notation, proper number formatting
 - **Japanese localization**: "平均取引価格" and "取引回数" legends
-- **2025 data notice**: Clear indication of Q1-only data
 
 ### Chart Output
-- **Total Charts Generated**: 3,804 charts
-- **Format**: PNG, 12x8 inches, 150 DPI
+- **Total Charts Generated**: 3,620 charts
+- **Format**: lossless WebP, 12x8 inches, 150 DPI
 - **Languages**: Japanese (_jp) and English (_en) versions
 - **Location**: `../../frontend/img/trend/house/`
+- **Current Size**: 113.7 MB total after WebP conversion (previous PNG set was 331.5 MB)
 
 ### Naming Convention
 ```
-{prefecture}_{area}_{room_type}_{language}.png
+{prefecture}_{area}_{room_type}_{language}.webp
 
 Examples:
-- aichi_名古屋市千種区_ALL_jp.png
-- aichi_名古屋市千種区_ALL_en.png
-- tokyo_千代田区_３ＬＤＫ_jp.png
+- aichi_名古屋市千種区_ALL_jp.webp
+- aichi_名古屋市千種区_ALL_en.webp
+- tokyo_千代田区_３ＬＤＫ_jp.webp
 ```
 
-## 🔧 Recent Improvements (2025-09-13)
+## 🔧 Recent Improvements (2026-05-30)
 
 ### Batch Processing System
 - **Problem Solved**: System crashes from processing large datasets
@@ -125,9 +127,15 @@ Examples:
 - **Consistency**: Uniform formatting across all prefectures
 
 ### Data Integration
-- **2025 Integration**: Successfully integrated Q1 2025 data across all prefectures
-- **Coverage Analysis**: Automated reporting of data limitations
-- **User Communication**: Added notices to all HTML files about Q1-only 2025 data
+- **2025 Integration**: Successfully integrated 2025 data through Q4 across all 6 prefectures
+- **Saitama Refresh**: Updated Saitama from stale historical coverage to the same 2007-2025 range as other prefectures
+- **Coverage Analysis**: Automated reporting of data completeness and chart output counts
+
+### WebP Chart Assets
+- **Format Change**: Converted frontend chart assets from PNG to lossless WebP
+- **Size Reduction**: Reduced chart image storage from 331.5 MB to 113.7 MB
+- **Pipeline Update**: `update_pipeline.py` now renders charts to an in-memory PNG buffer and writes lossless WebP files through Pillow
+- **Frontend Sync**: HTML chart references use `.webp`; cards with no corresponding chart asset should be removed to avoid broken images
 
 ## 💻 Usage Examples
 
@@ -139,7 +147,7 @@ from update_pipeline import HouseTrendUpdater
 updater = HouseTrendUpdater()
 
 # Process in manageable batches
-prefectures = ['tokyo', 'chiba', 'kanagawa', 'osaka', 'aichi']
+prefectures = ['tokyo', 'chiba', 'saitama', 'kanagawa', 'osaka', 'aichi']
 for prefecture in prefectures:
     # Load processed data
     df = pd.read_csv(f'data/{prefecture}_api_processed.csv')
@@ -166,42 +174,45 @@ print(f"2025 periods: {df_2025['取引時期'].unique()}")
 
 ## 📋 Performance Metrics
 
-### Latest Complete Run (2025-09-13)
-- **Duration**: ~4 hours (batch processing)
-- **Charts Generated**: 3,804 total
+### Latest Complete Run (2026-05-30)
+- **Charts Generated**: 3,620 total
 - **Success Rate**: 100% (no crashes)
-- **Data Processed**: 1.3M+ transactions
-- **Prefectures Completed**: 5/5
+- **Data Processed**: 1,582,361 transactions
+- **Prefectures Completed**: 6/6
 
 ### Breakdown by Prefecture
-| Prefecture | Areas | Charts | Processing Time |
-|------------|-------|--------|----------------|
-| Tokyo | 59 | 708 | ~45 minutes |
-| Chiba | 59 | 708 | ~45 minutes |
-| Kanagawa | 58 | 696 | ~43 minutes |
-| Osaka | 72 | 864 | ~54 minutes |
-| Aichi | 69 | 828 | ~52 minutes |
+| Prefecture | Areas | Charts |
+|------------|-------|--------|
+| Tokyo | 59 | 610 |
+| Chiba | 59 | 386 |
+| Saitama | 72 | 628 |
+| Kanagawa | 58 | 594 |
+| Osaka | 72 | 766 |
+| Aichi | 69 | 636 |
 
 ## 🛠️ Installation & Setup
 
 ### Requirements
 ```bash
-pip install pandas numpy matplotlib japanize-matplotlib requests python-dotenv
+pip install pandas numpy matplotlib japanize-matplotlib requests python-dotenv pillow
 ```
 
 ### Environment Configuration
-Create `.env` file:
+Copy `.env.example` to `.env` and fill in your MLIT API key:
+```bash
+cp .env.example .env
 ```
-Ocp-Apim-Subscription-Key="your_mlit_api_key_here"
-```
+And set your API key in `.env`:
+`Ocp-Apim-Subscription-Key="your_mlit_api_key_here"`
 
 ### Directory Structure Setup
-Ensure the following directories exist:
+Ensure the following directories exist locally (ignored by Git):
 ```
-backend/japan-house-trend/api_data/     # API responses
-backend/japan-house-trend/data/         # Processed CSV files
+backend/japan-house-trend/api_data/     # API responses (created automatically)
+backend/japan-house-trend/data/         # Processed CSV files (created automatically)
 frontend/img/trend/house/               # Chart output location
 ```
+
 
 ## 🚨 Troubleshooting
 
@@ -217,14 +228,19 @@ frontend/img/trend/house/               # Chart output location
 - **Solution**: Custom FuncFormatter implementation
 - **Result**: Clean number display (e.g., "30,000,000")
 
-**3. 2025 Data Appears Low**
-- **Status**: ✅ Expected behavior
-- **Explanation**: 2025 includes only Q1 (Jan-Mar) data
-- **User Notice**: Added to all HTML files
-
-**4. Japanese Font Issues**
+**3. Japanese Font Issues**
 - **Solution**: Ensure `japanize-matplotlib` is installed
 - **Note**: Charts generate correctly despite font warnings
+
+**4. 2025 Transaction Counts Look Low**
+- **Cause**: The latest MLIT quarter can have fewer available records than earlier quarters, and transformation filters remove records without required fields
+- **Check**: Compare CSV counts by quarter with `df[df['取引時期（年）'] == 2025]['取引時期'].value_counts()`
+- **Note**: Confirm whether the WebP asset was regenerated after CSV updates if a chart appears inconsistent with CSV counts
+
+**5. Broken Chart Images**
+- **Cause**: HTML may reference area/room-type combinations that are absent in current CSV data and therefore do not produce chart files
+- **Solution**: Remove cards whose referenced WebP files do not exist, or regenerate the matching chart if data is available
+- **Check**: Verify all HTML `img/trend/house/*.webp` references exist in `frontend/img/trend/house/`
 
 ## 📝 Data Quality & Validation
 
@@ -233,12 +249,6 @@ frontend/img/trend/house/               # Chart output location
 - **Year Coverage**: Confirms 2007-2025 range
 - **Chart Generation**: Counts and verifies all output files
 - **Error Tracking**: Comprehensive logging of any failures
-
-### 2025 Data Limitations
-- **Coverage**: Q1 only (January-March 2025)
-- **Impact**: Transaction counts appear lower (10-15% of annual volume)
-- **Communication**: Clear notices added to user interface
-- **Expected**: Normal due to government data release schedule
 
 ## 🔄 Maintenance
 
@@ -250,7 +260,9 @@ frontend/img/trend/house/               # Chart output location
 
 ### Quality Assurance
 - Review completion reports in `api_data/` directory
-- Verify chart counts match expected totals (317 areas × 6 room types × 2 languages)
+- Verify chart counts match expected totals for non-empty area/room-type combinations
+- Confirm no stale PNG references remain in frontend HTML
+- Confirm no broken chart references remain after removing cards for missing assets
 - Spot-check chart visual consistency and formatting
 - Monitor system performance during batch processing
 
@@ -269,16 +281,17 @@ Charts are automatically integrated into the website:
 
 ## 🏆 Recent Achievements
 
-- ✅ **Complete Data Integration**: 2025 Q1 data across all prefectures
+- ✅ **Complete Data Integration**: 2025 Q4 data across all 6 prefectures
 - ✅ **System Stability**: 100% success rate with batch processing
 - ✅ **Chart Quality**: Professional formatting with clean numbers and Japanese localization
 - ✅ **Bilingual Support**: Full Japanese and English chart generation
-- ✅ **User Experience**: Clear data limitation notices and responsive modal display
+- ✅ **User Experience**: Responsive modal display with updated charts
+- ✅ **Asset Optimization**: Lossless WebP chart assets reduce image storage and page payload
 - ✅ **Performance**: Efficient batch processing preventing system crashes
 
 ---
 
-**Last Updated**: 2025-09-14
+**Last Updated**: 2026-05-30
 **System Status**: ✅ Fully Operational
-**Data Status**: 2007-2025 Q1 Complete
-**Chart Status**: 3,804 charts generated and deployed
+**Data Status**: 2007-2025 Q4 Complete
+**Chart Status**: 3,620 charts generated and deployed

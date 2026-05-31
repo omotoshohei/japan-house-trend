@@ -1,9 +1,11 @@
 # Data directories (raw data files are too large for git)
 raw_data/
 api_data/
+data/
 
 # Environment variables
 .env
+.env.example
 
 # Python cache
 __pycache__/

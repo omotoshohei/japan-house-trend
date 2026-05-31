@@ -190,9 +190,9 @@ class APIDataTransformer:
             '取引時期': api_record.get('Period', ''),
             '取引時期（年）': transaction_year,
             '築年数': self.extract_building_age(
-                api_record.get('BuildingYear', ''), 
-                transaction_year or 2024
-            )
+                api_record.get('BuildingYear', ''),
+                transaction_year
+            ) if transaction_year else None
         }
         
         return transformed

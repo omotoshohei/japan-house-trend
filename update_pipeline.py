@@ -11,6 +11,8 @@ import japanize_matplotlib
 from matplotlib.ticker import MaxNLocator, FuncFormatter
 from datetime import datetime
 import json
+from io import BytesIO
+from PIL import Image
 
 from api_client import MLITAPIClient
 from data_transformer import APIDataTransformer
@@ -20,18 +22,21 @@ class HouseTrendUpdater:
         """Initialize the house trend updater"""
         self.client = MLITAPIClient()
         self.transformer = APIDataTransformer()
+        self.base_dir = os.path.dirname(os.path.abspath(__file__))
+        self.repo_root = os.path.abspath(os.path.join(self.base_dir, "..", ".."))
         
         # Room types for chart generation (matching original system)
         self.room_types = ["ALL", "４ＬＤＫ", "３ＬＤＫ", "２ＬＤＫ", "１ＬＤＫ", "１Ｋ"]
         
         # Output directories
-        self.api_data_dir = "api_data"
-        self.processed_data_dir = "data"
-        self.chart_output_dir = "../../../heysho/frontend/img/trend/house"
+        self.api_data_dir = os.path.join(self.base_dir, "api_data")
+        self.processed_data_dir = os.path.join(self.base_dir, "data")
+        self.chart_output_dir = os.path.join(self.repo_root, "frontend", "img", "trend", "house")
         
         # Ensure directories exist
         os.makedirs(self.api_data_dir, exist_ok=True)
         os.makedirs(self.processed_data_dir, exist_ok=True)
+        os.makedirs(self.chart_output_dir, exist_ok=True)
         
         # Progress tracking
         self.progress = {
@@ -42,7 +47,7 @@ class HouseTrendUpdater:
             'errors': []
         }
     
-    def run_full_update(self, start_year: int = 2007, end_year: int = 2024, 
+    def run_full_update(self, start_year: int = 2007, end_year: int = 2025,
                        test_mode: bool = False):
         """
         Run the complete data update pipeline
@@ -298,10 +303,15 @@ class HouseTrendUpdater:
         ax2.legend(lines + lines2, labels + labels2, loc='upper left')
         
         # Save chart
-        filename = f'{prefecture}_{area}_{room_type}_{language}.png'
+        os.makedirs(self.chart_output_dir, exist_ok=True)
+        filename = f'{prefecture}_{area}_{room_type}_{language}.webp'
         filepath = os.path.join(self.chart_output_dir, filename)
         
-        plt.savefig(filepath, dpi=150, bbox_inches='tight')
+        buffer = BytesIO()
+        plt.savefig(buffer, dpi=150, bbox_inches='tight', format='png')
+        buffer.seek(0)
+        with Image.open(buffer) as image:
+            image.convert('RGB').save(filepath, 'WEBP', lossless=True, method=6)
         plt.close()
     
     def generate_all_charts(self, prefecture_dataframes: dict, test_mode: bool = False):
@@ -334,7 +344,10 @@ class HouseTrendUpdater:
         }
         
         # Save report
-        report_filename = f"api_data/completion_report_{end_time.strftime('%Y%m%d_%H%M%S')}.json"
+        report_filename = os.path.join(
+            self.api_data_dir,
+            f"completion_report_{end_time.strftime('%Y%m%d_%H%M%S')}.json"
+        )
         with open(report_filename, 'w', encoding='utf-8') as f:
             json.dump(report, f, ensure_ascii=False, indent=2)
         
@@ -358,5 +371,5 @@ if __name__ == "__main__":
     updater = HouseTrendUpdater()
     
     # Test with limited data first
-    print("Running in TEST mode (Tokyo only, 2024 data)")
-    updater.run_full_update(start_year=2024, end_year=2024, test_mode=True)
+    print("Running in TEST mode (Tokyo only, 2025 data)")
+    updater.run_full_update(start_year=2025, end_year=2025, test_mode=True)

@@ -166,13 +166,13 @@ class MLITAPIClient:
         print(f"✅ {prefecture_name} complete: {len(all_data)} total records")
         return all_data
     
-    def fetch_all_prefectures(self, start_year: int = 2007, end_year: int = 2024) -> Dict[str, List[Dict]]:
+    def fetch_all_prefectures(self, start_year: int = 2007, end_year: int = 2025) -> Dict[str, List[Dict]]:
         """
         Fetch data for all 6 prefectures
         
         Args:
             start_year: Starting year (default: 2007)
-            end_year: Ending year (default: 2024)
+            end_year: Ending year (default: 2025)
             
         Returns:
             Dictionary with prefecture names as keys and data lists as values
